@@ -48,7 +48,7 @@ hr.star-primary:after {
   top: -.8em;
   display: inline-block;
   padding: 0 0.25em;
-  content: '\f005'; }
+   }
 
 hr.star-light {
   border-color: white; }
@@ -175,6 +175,16 @@ header.masthead {
   header.masthead .intro-text .skills {
     font-size: 1.25em;
     font-weight: 300; }
+  header.masthead .intro-text .mentors h1{
+    padding-top: 75px;
+    font-size: 4em;
+    text-align: right;
+  }
+  header.masthead .intro-text .mentors h3{
+    font-size:2.75em;
+    padding-top:85px;
+    text-align: left;
+  }
 
 @media (min-width: 768px) {
   header.masthead {

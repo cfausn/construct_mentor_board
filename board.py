@@ -66,7 +66,7 @@ def main():
 
     now = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
     eventsResult = service.events().list(
-        calendarId='jm3ncjbomu6jasgq2nm3ni5lu0@group.calendar.google.com', timeMin=now, maxResults=300, singleEvents=True,
+        calendarId='jm3ncjbomu6jasgq2nm3ni5lu0@group.calendar.google.com', timeMin=now, maxResults=2, singleEvents=True,
         orderBy='startTime').execute()
     events = eventsResult.get('items', [])
 
@@ -75,12 +75,14 @@ def main():
     if not events: print('No upcoming events found.')
     else: threading.Thread(target=getStatuses, args=(events,)).start()
     
-    print("WUT")
+    # TODO: Add Serial Port communication to update the "status" variable within an event.
+    #       Add a "isconnected" variable as well to help out the webpage w/ knowing if 
+    #       the BT connection is active.
 
 
 def getStatuses(events):
     
-    with open('schedules.csv','w') as csvfile:
+    with open('html/data/schedules.csv','w') as csvfile:
        fieldnames = ['name', 'start', 'end','isWorking','status']
        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
        writer.writeheader()
