@@ -60,27 +60,33 @@ def main():
     Creates a Google Calendar API service object and outputs a list of the next
     10 events on the user's calendar.
     """
-    credentials = get_credentials()
-    http = credentials.authorize(httplib2.Http())
-    service = discovery.build('calendar', 'v3', http=http)
 
-    now = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
-    eventsResult = service.events().list(
-        calendarId='jm3ncjbomu6jasgq2nm3ni5lu0@group.calendar.google.com', timeMin=now, maxResults=2, singleEvents=True,
-        orderBy='startTime').execute()
-    events = eventsResult.get('items', [])
-
-
+    events = getEvents()
 
     if not events: print('No upcoming events found.')
-    else: threading.Thread(target=getStatuses, args=(events,)).start()
+    else: threading.Thread(target=updateBoard, args=(events,)).start()
     
     # TODO: Add Serial Port communication to update the "status" variable within an event.
     #       Add a "isconnected" variable as well to help out the webpage w/ knowing if 
     #       the BT connection is active.
 
 
-def getStatuses(events):
+def getEvents():
+    credentials = get_credentials()
+    http = credentials.authorize(httplib2.Http())
+    service = discovery.build('calendar', 'v3', http=http)
+
+    now = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
+    eventsResult = service.events().list(
+        calendarId='jm3ncjbomu6jasgq2nm3ni5lu0@group.calendar.google.com', timeMin=now, maxResults=3, singleEvents=True,
+        orderBy='startTime').execute()
+    return eventsResult.get('items', [])
+    
+
+def updateBoard(events):
+
+    statuses = getStatuses()
+    statusCount = 0
     
     with open('html/data/schedules.csv','w') as csvfile:
        fieldnames = ['name', 'start', 'end','isWorking','status']
@@ -94,7 +100,7 @@ def getStatuses(events):
            endString = end[:-6]
            startString = start[:-6]
            isWorking = False
-           status = ''
+           status = statuses[statusCount]
            startDateTime = datetime.datetime.strptime(startString, "%Y-%m-%dT%H:%M:%S")
            endDateTime = datetime.datetime.strptime(endString, "%Y-%m-%dT%H:%M:%S")
            if present < endDateTime and present > startDateTime:
@@ -102,12 +108,14 @@ def getStatuses(events):
 
  
            writer.writerow({'name': event['summary'], 'start':start, 'end':end, 'isWorking':isWorking, 'status':status})
+           statusCount+=1
 
-
-           #print(start,end, event['summary'])
-    print("Updated CSV")
     time.sleep(5)
-    getStatuses(events)
+    updateBoard(getEvents())
+
+def getStatuses():
+    #GET FROM SERIAL, RIGHT NOW THESE ARE DUMMIES
+    return [0,1,2]
 
 if __name__ == '__main__':
     main()

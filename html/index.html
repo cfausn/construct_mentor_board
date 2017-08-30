@@ -46,6 +46,14 @@
               <h3 class="col col-md-5" id="mentorTwoStatus"></h3>
             </div>
           </div>
+
+          <div class="mentors">
+            <div class="row">
+              <h1 class="col col-md-5" id="mentorThree"></h1>
+              <h1 class="col col-md-1"></h1>
+              <h3 class="col col-md-5" id="mentorThreeStatus"></h3>
+            </div>
+          </div>
         </div>
       </div>
     </header>
@@ -71,15 +79,18 @@
       var csvfile = "data/schedules.csv";
       var parsedData;
 
-      function getStuff(){
+      function getStats(){
         $.get(csvfile, function (data) {
           parsedData = Papa.parse(data);
           console.log(parsedData);
           console.log(parsedData['data'][1][3]);
+          var mentorOne = parsedData['data'][1];
+          var mentorTwo = parsedData['data'][2];
+          var mentorThree = parsedData['data'][3];
 
-          if(parsedData['data'][1][3] == 'True'){
-            document.getElementById('mentorOne').innerHTML = parsedData['data'][1][0];
-            var statusCode = parsedData['data'][1][4];
+          if(mentorOne[3] == 'True'){
+            document.getElementById('mentorOne').innerHTML = mentorOne[0];
+            var statusCode = mentorOne[4];
             if(statusCode == '0'){
               document.getElementById('mentorOneStatus').innerHTML = "Unavailable";
               document.getElementById('mentorOneStatus').style.color = 'red';
@@ -92,9 +103,10 @@
               document.getElementById('mentorOneStatus').innerHTML = "Helping Someone";
               document.getElementById('mentorOneStatus').style.color = 'yellow';}
           }
-          if(parsedData['data'][2][3] == 'True'){
-            document.getElementById('mentorTwo').innerHTML = parsedData['data'][2][0];
-            var statusCode = parsedData['data'][2][4];
+
+          if(mentorTwo[3] == 'True'){
+            document.getElementById('mentorTwo').innerHTML = mentorTwo[0];
+            var statusCode = mentorTwo[4];
             if(statusCode == '0'){
               document.getElementById('mentorTwoStatus').innerHTML = "Unavailable";
               document.getElementById('mentorTwoStatus').style.color = 'red';
@@ -107,11 +119,27 @@
               document.getElementById('mentorTwoStatus').innerHTML = "Helping Someone";
               document.getElementById('mentorTwoStatus').style.color = 'yellow';}
           }
+
+          if(mentorThree[3] == 'True'){
+            document.getElementById('mentorThree').innerHTML = mentorThree[0];
+            var statusCode = mentorThree[4];
+            if(statusCode == '0'){
+              document.getElementById('mentorThreeStatus').innerHTML = "Unavailable";
+              document.getElementById('mentorThreeStatus').style.color = 'red';
+            }
+            else if (statusCode == '1') {
+              document.getElementById('mentorThreeStatus').innerHTML = "Available";
+              document.getElementById('mentorThreeStatus').style.color = 'green';
+            }
+            else if (statusCode == '2') {
+              document.getElementById('mentorThreeStatus').innerHTML = "Helping Someone";
+              document.getElementById('mentorThreeStatus').style.color = 'yellow';}
+          }
         });
-        setTimeout(getStuff, 5000);
+        setTimeout(getStats, 5000);
       }
 
-      getStuff();
+      getStats();
 
 
     </script>
