@@ -82,6 +82,7 @@
       function getStats(){
         $.get(csvfile, function (data) {
           parsedData = Papa.parse(data);
+          console.log(data)
           console.log(parsedData);
           console.log(parsedData['data'][1][3]);
           var mentorOne = parsedData['data'][1];
@@ -103,6 +104,10 @@
               document.getElementById('mentorOneStatus').innerHTML = "Helping Someone";
               document.getElementById('mentorOneStatus').style.color = 'yellow';}
           }
+          else{
+            document.getElementById('mentorOne').innerHTML = "";
+            document.getElementById('mentorOneStatus').innerHTML = "";
+          }
 
           if(mentorTwo[3] == 'True'){
             document.getElementById('mentorTwo').innerHTML = mentorTwo[0];
@@ -119,7 +124,10 @@
               document.getElementById('mentorTwoStatus').innerHTML = "Helping Someone";
               document.getElementById('mentorTwoStatus').style.color = 'yellow';}
           }
-
+          else{
+            document.getElementById('mentorTwo').innerHTML = "";
+            document.getElementById('mentorTwoStatus').innerHTML = "";
+          }
           if(mentorThree[3] == 'True'){
             document.getElementById('mentorThree').innerHTML = mentorThree[0];
             var statusCode = mentorThree[4];
@@ -134,6 +142,10 @@
             else if (statusCode == '2') {
               document.getElementById('mentorThreeStatus').innerHTML = "Helping Someone";
               document.getElementById('mentorThreeStatus').style.color = 'yellow';}
+          }
+          else {
+            document.getElementById('mentorThree').innerHTML = "";
+            document.getElementById('mentorThreeStatus').innerHTML = "";
           }
         });
         setTimeout(getStats, 5000);

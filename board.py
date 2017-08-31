@@ -13,6 +13,8 @@ import datetime
 import time
 import threading
 
+import urllib.request
+
 try:
     import argparse
     flags = argparse.ArgumentParser(parents=[tools.argparser]).parse_args()
@@ -24,7 +26,7 @@ except ImportError:
 SCOPES = 'https://www.googleapis.com/auth/calendar.readonly'
 CLIENT_SECRET_FILE = 'client_secret.json'
 APPLICATION_NAME = 'Google Calendar API Python Quickstart'
-
+statuses = ["2"]
 
 def get_credentials():
     """Gets valid user credentials from storage.
@@ -65,7 +67,7 @@ def main():
 
     if not events: print('No upcoming events found.')
     else: threading.Thread(target=updateBoard, args=(events,)).start()
-    
+   
     # TODO: Add Serial Port communication to update the "status" variable within an event.
     #       Add a "isconnected" variable as well to help out the webpage w/ knowing if 
     #       the BT connection is active.
@@ -115,7 +117,20 @@ def updateBoard(events):
 
 def getStatuses():
     #GET FROM SERIAL, RIGHT NOW THESE ARE DUMMIES
-    return [0,1,2]
+    u = urllib.request.urlopen("http://172.20.10.6/")
+    rstr = u.read()
+    stat = rstr.decode()[-1]
+    statuses[0] = stat 
+
+    if len(statuses) == 3: return statuses
+    elif len(statuses) == 2:
+      statuses.append("0")
+      return statuses
+    elif len(statuses) == 1:
+      statuses.append("0")
+      statuses.append("0")
+      return statuses
+
 
 if __name__ == '__main__':
     main()
