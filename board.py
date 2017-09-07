@@ -26,7 +26,6 @@ except ImportError:
 SCOPES = 'https://www.googleapis.com/auth/calendar.readonly'
 CLIENT_SECRET_FILE = 'client_secret.json'
 APPLICATION_NAME = 'Google Calendar API Python Quickstart'
-statuses = ["2"]
 
 def get_credentials():
     """Gets valid user credentials from storage.
@@ -102,7 +101,10 @@ def updateBoard(events):
            endString = end[:-6]
            startString = start[:-6]
            isWorking = False
-           status = statuses[statusCount]
+
+           if event['summary'] in statuses.keys(): status = statuses[event['summary']]
+           else: status = 0
+
            startDateTime = datetime.datetime.strptime(startString, "%Y-%m-%dT%H:%M:%S")
            endDateTime = datetime.datetime.strptime(endString, "%Y-%m-%dT%H:%M:%S")
            if present < endDateTime and present > startDateTime:
@@ -117,19 +119,18 @@ def updateBoard(events):
 
 def getStatuses():
     #GET FROM SERIAL, RIGHT NOW THESE ARE DUMMIES
-    u = urllib.request.urlopen("http://129.21.71.15/")
+    statuses = {}
+    u = urllib.request.urlopen("http://badge1.student.rit.edu")
     rstr = u.read()
-    stat = rstr.decode()[-1]
-    statuses[0] = stat 
+    stat = rstr.decode()
+    name_stat = stat.split(",")
+   
+    try:
+      statuses[name_stat[0].split("\n")[-1]] = name_stat[1]
+    except: print("oops")
 
-    if len(statuses) == 3: return statuses
-    elif len(statuses) == 2:
-      statuses.append("0")
-      return statuses
-    elif len(statuses) == 1:
-      statuses.append("0")
-      statuses.append("0")
-      return statuses
+    return statuses
+
 
 
 if __name__ == '__main__':
