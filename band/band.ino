@@ -1,18 +1,30 @@
 #include <ESP8266WiFi.h>
- 
-const char* ssid = "Colin's iPhone";//type your ssid
-const char* password = "cfausnaught";//type your password
+#include <LiquidCrystal.h>
+
+const char* ssid = "RIT-Legacy";//type your ssid
 
 
 WiFiServer server(80);//Service Port
 
 #define LED D2
 #define BUTTON D1
+#define RS D3
+#define ENABLE D4
+#define DB0 D5
+#define DB1 D6
+#define DB2 D7
+#define DB3 D8
+
 boolean wasTripped = true;
 int oldButtonState = LOW;
 int currentStatus = 0;
+
+LiquidCrystal lcd(RS,ENABLE,DB0,DB1,DB2,DB3);
  
 void setup() {
+  lcd.begin(16,2);
+  lcd.setCursor(0,0);
+  lcd.print("TEST");
   Serial.begin(115200);
   delay(10);
 
@@ -26,7 +38,7 @@ void setup() {
   Serial.print("Connecting to ");
   Serial.println(ssid);
    
-  WiFi.begin(ssid, password);
+  WiFi.begin(ssid);
    
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
@@ -44,9 +56,14 @@ void setup() {
   Serial.print("http://");
   Serial.print(WiFi.localIP());
   Serial.println("/");
+  Serial.print("MAC: ");
+  Serial.println(WiFi.macAddress());
 }
  
 void loop() {
+  lcd.setCursor(0, 1);
+  lcd.print(millis() / 1000);
+  
   int buttonState = digitalRead(BUTTON);
 
   

@@ -117,7 +117,7 @@ def updateBoard(events):
 
 def getStatuses():
     #GET FROM SERIAL, RIGHT NOW THESE ARE DUMMIES
-    u = urllib.request.urlopen("http://172.20.10.6/")
+    u = urllib.request.urlopen("http://129.21.71.15/")
     rstr = u.read()
     stat = rstr.decode()[-1]
     statuses[0] = stat 
