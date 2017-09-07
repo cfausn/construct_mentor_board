@@ -11,6 +11,21 @@ Mark Bramwell, July 2010
 // select the pins used on the LCD panel
 LiquidCrystal lcd(8, 9, 4, 5, 6, 7);
 
+#define NUM_MENTORS 7
+#define NUM_STATUSES 3
+
+#define STATUS_PIN_UP 0
+#define STATUS_PIN_DOWN 1
+#define NAME_PIN_UP 2
+#define NAME_PIN_DOWN 3
+
+String mentors[NUM_MENTORS]  = {"     Andrew       ","     Colin      ","     Esther     ","     Mark       ","     Matt       ","     Michelle   ","     Myles      "};
+String statuses[NUM_STATUSES] = {"Unavailable     ","Available       ","Helping Someone "};
+
+
+int mentor_index = 0;
+int status_index = 1;
+
 // define some values used by the panel and buttons
 int lcd_key     = 0;
 int adc_key_in  = 0;
@@ -53,8 +68,15 @@ void setup()
 {
  lcd.begin(16, 2);              // start the library
  lcd.setCursor(0,0);
- lcd.print("Push the buttons"); // print a simple message
-}
+ lcd.print(mentors[mentor_index]); // print a simple message
+ lcd.setCursor(0,1);
+ lcd.print(statuses[status_index]);
+ pinMode(STATUS_PIN_UP, OUTPUT);
+ pinMode(STATUS_PIN_DOWN, OUTPUT);
+ pinMode(NAME_PIN_UP, OUTPUT);
+ pinMode(NAME_PIN_DOWN, OUTPUT);
+ digitalWrite(STATUS_PIN_DOWN,LOW);
+ }
  
 void loop()
 {
@@ -92,12 +114,61 @@ void loop()
      case btnNONE:
      {
      switch(last_btn){
-      case btnRIGHT: { lcd.print("RIGHT PRESSED"); break;}
-      case btnLEFT: {lcd.print("LEFT PRESSED "); break;}
-      case btnUP: {lcd.print("UP PRESSED    "); break;}
-      case btnDOWN: {lcd.print("DOWN PRESSED  "); break;}
-      case btnSELECT: {lcd.print("SELECT PRESSED"); break;}
-      case btnNONE: {lcd.print("NONE"); break;}
+      case btnRIGHT: { 
+        lcd.setCursor(0,0);
+        if(mentor_index < NUM_MENTORS -1) mentor_index++;
+        else mentor_index = 0;
+        
+        digitalWrite(NAME_PIN_UP,HIGH);
+        lcd.print(mentors[mentor_index]);
+        last_btn = btnNONE;
+        break;
+      }
+      case btnLEFT: { 
+        lcd.setCursor(0,0);
+        if(mentor_index > 0) mentor_index--;
+        else mentor_index = 6;
+        
+        digitalWrite(NAME_PIN_DOWN,HIGH);
+        lcd.print(mentors[mentor_index]);
+        last_btn = btnNONE;       
+
+        break;
+      }
+      case btnUP: {
+        lcd.setCursor(0,1);
+        if(status_index < NUM_STATUSES - 1) status_index++;
+        else status_index = 0;
+        
+        digitalWrite(STATUS_PIN_UP,HIGH);
+        lcd.print(statuses[status_index]);
+        last_btn = btnNONE;
+        break;
+      }
+      case btnDOWN: {
+        lcd.setCursor(0,1);
+        if(status_index > 0) status_index--;
+        else status_index = 2;
+        
+        digitalWrite(STATUS_PIN_DOWN,HIGH);
+        lcd.print(statuses[status_index]);
+        last_btn = btnNONE;
+        break;
+      }
+      case btnSELECT: {
+        lcd.setCursor(0,1);
+        lcd.print("SELECT PRESSED"); 
+        last_btn = btnNONE;
+        break;
+      }
+      case btnNONE: {
+        digitalWrite(STATUS_PIN_UP, LOW);
+        digitalWrite(STATUS_PIN_DOWN, LOW);
+        digitalWrite(NAME_PIN_UP, LOW);
+        digitalWrite(NAME_PIN_DOWN, LOW);
+        
+        break;
+       }
       
       
      }

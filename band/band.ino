@@ -6,30 +6,31 @@ const char* ssid = "RIT-Legacy";//type your ssid
 
 WiFiServer server(80);//Service Port
 
-#define LED D2
-#define BUTTON D1
-#define RS D3
-#define ENABLE D4
-#define DB0 D5
-#define DB1 D6
-#define DB2 D7
-#define DB3 D8
+#define STATUS_PIN_UP D0
+#define STATUS_PIN_DOWN D1
+#define NAME_PIN_UP D2
+#define NAME_PIN_DOWN D3
+#define LED D4
+
 
 boolean wasTripped = true;
-int oldButtonState = LOW;
 int currentStatus = 0;
+int oldButtonState = LOW;
+int currentStatusUP = LOW;
+int currentStatusDOWN = LOW;
+int currentNameUP = LOW;
+int currentNameDOWN = LOW;
 
-LiquidCrystal lcd(RS,ENABLE,DB0,DB1,DB2,DB3);
  
 void setup() {
-  lcd.begin(16,2);
-  lcd.setCursor(0,0);
-  lcd.print("TEST");
   Serial.begin(115200);
   delay(10);
 
-  pinMode(BUTTON, INPUT);
   pinMode(LED, OUTPUT);
+  pinMode(STATUS_PIN_UP, INPUT);
+  pinMode(STATUS_PIN_DOWN, INPUT);
+  pinMode(NAME_PIN_UP, INPUT);
+  pinMode(NAME_PIN_DOWN, INPUT);
   digitalWrite(LED, LOW);
    
   // Connect to WiFi network
@@ -61,30 +62,17 @@ void setup() {
 }
  
 void loop() {
-  lcd.setCursor(0, 1);
-  lcd.print(millis() / 1000);
   
-  int buttonState = digitalRead(BUTTON);
+  int statusUp = digitalRead(STATUS_PIN_UP);
+  int statusDown = digitalRead(STATUS_PIN_DOWN);
+  int nameUp = digitalRead(NAME_PIN_UP);
+  int nameDown = digitalRead(NAME_PIN_DOWN);
 
-  
-  
-  if(buttonState == HIGH && oldButtonState == LOW){
-    if(!wasTripped){
-      
-      if(currentStatus == 0) currentStatus++;
-      else if(currentStatus == 1) currentStatus++;
-      else currentStatus = 0;
-      
-      digitalWrite(LED,HIGH);
-      wasTripped = true;  
-    }
-    else{
-      digitalWrite(LED,LOW);
-      wasTripped = false;  
-    }
-    
-  }
-  oldButtonState = buttonState;
+
+  if(statusUp == HIGH) Serial.println("Status Up");
+  if(statusDown == HIGH) Serial.println("Status Down");
+  if(nameUp == HIGH) Serial.println("Name Up");
+  if(nameDown == HIGH) Serial.println("Name Down");
 
   // Check if a client has connected
   WiFiClient client = server.available();
